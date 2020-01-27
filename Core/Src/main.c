@@ -40,16 +40,6 @@
 
 /* Private define ------------------------------------------------------------*/
 /* USER CODE BEGIN PD */
-/*Constant used for the computation of the apparent temperature*/
-#define C1	-8.78469
-#define C2	1.61139
-#define C3	2.33854
-#define C4	-0.14611
-#define C5	-0.012308
-#define C6	-0.0164248
-#define C7	0.0022117
-#define C8	0.00072546
-#define C9	-0.000003582
 /* USER CODE END PD */
 
 /* Private macro -------------------------------------------------------------*/
@@ -73,18 +63,26 @@ PCD_HandleTypeDef hpcd_USB_OTG_FS;
 
 osThreadId_t defaultTaskHandle;
 /* USER CODE BEGIN PV */
-float temp_value = 0;
-float humid_value = 0;
-float heatIndex=0;
+
+/*Data structure containing the shared variables*/
+struct ambient_conditions{
+float temp_value;
+float humid_value;
+float humidex;
+}ambient_conditions;
+
+/*Initialization messages*/
 uint8_t msg1[] = "=====> Initialize Temperature sensor HTS221 \r\n";
 uint8_t msg2[] = "=====> Temperature sensor HTS221 initialized \r\n";
 uint8_t msg3[] = "=====> Initialize Humidity sensor HTS221 \r\n";
 uint8_t msg4[] = "=====> Humidity sensor HTS221 initialized \r\n";
 
+/*Threads handlers*/
 osThreadId_t temp_task_handle;
 osThreadId_t humid_task_handle;
 osThreadId_t apparent_temp_task_handle;
 
+/*Semaphores handlers*/
 osMutexId_t mutex;
 osSemaphoreId_t temp_sem;
 osSemaphoreId_t humid_sem;
@@ -107,10 +105,11 @@ void StartDefaultTask(void *argument);
 
 
 /* USER CODE BEGIN PFP */
-void temp_task(void *argument);
-void humid_task(void *argument);
-void apparent_temp_task(void *argument);
-float calculate_HI();
+void temp_task(struct ambient_conditions* ac);
+void humid_task(struct ambient_conditions* ac);
+void apparent_temp_task(struct ambient_conditions* ac);
+float calculate_h(struct ambient_conditions* ac);
+void struct_init(struct ambient_conditions* ac);
 /* USER CODE END PFP */
 
 /* Private user code ---------------------------------------------------------*/
@@ -163,6 +162,8 @@ int main(void)
   BSP_HSENSOR_Init();
   HAL_UART_Transmit(&huart1,msg4,sizeof(msg4),1000);
 
+  /*Initialize the data structure*/
+  struct_init(&ambient_conditions);
   /* USER CODE END 2 */
 
   osKernelInitialize();
@@ -196,17 +197,17 @@ int main(void)
   /* definition and creation of defaultTask and its attributes. The stack size was 128 originally*/
   const osThreadAttr_t defaultTask_attributes = {
     .name = "defaultTask",
-    .priority = (osPriority_t) osPriorityNormal,
-    .stack_size = 512
+    .priority = (osPriority_t) osPriorityHigh,
+    .stack_size = 650
   };
 
  /* defaultTaskHandle = osThreadNew(StartDefaultTask, NULL, &defaultTask_attributes); */
 
   /* USER CODE BEGIN RTOS_THREADS */
   /* add threads, ... */
-  apparent_temp_task_handle=osThreadNew(apparent_temp_task, NULL, &defaultTask_attributes);
-  temp_task_handle=osThreadNew(temp_task, NULL, &defaultTask_attributes);
-  humid_task_handle=osThreadNew(humid_task, NULL, &defaultTask_attributes);
+  apparent_temp_task_handle=osThreadNew(apparent_temp_task,&ambient_conditions, &defaultTask_attributes);
+  temp_task_handle=osThreadNew(temp_task, &ambient_conditions, &defaultTask_attributes);
+  humid_task_handle=osThreadNew(humid_task, &ambient_conditions, &defaultTask_attributes);
   /* USER CODE END RTOS_THREADS */
 
   /* Start scheduler */
@@ -750,23 +751,27 @@ static void MX_GPIO_Init(void)
 }
 
 /* USER CODE BEGIN 4 */
+/*Initialize the data structure*/
+void struct_init(struct ambient_conditions* ac){
+	ac->humid_value=0;
+	ac->temp_value=0;
+	ac->humidex=0;
+}
 
-/*Calculate the Heat Index, only if temperature>=25 and humidity>=40*/
-float calculate_HI(){
-	float hi=0;
-	float t=temp_value;
-	float h=humid_value;
-	float t_square=pow(t,2);
-	float h_square=pow(h,2);
+/*Calculate humidex based on temperature and humidity*/
+float calculate_h(struct ambient_conditions*ac){
+	float h=0;
+	float e=0;
 
-	hi=C1+(C2*t)+(C3*h)+(C4*t*h)+(C5*t_square)+(C6*h_square)+(C7*h*t_square)+(C8*t*h_square)+(C9*h_square*t_square);
+	e=0.06*ac->humid_value*(pow(10,0.03*ac->temp_value));
+	h=ac->temp_value+(0.55555*(e-10));
 
-	return hi;
+	return h;
 }
 
 /*Read the temperature value from the sensor and split it in 2 integer (1 for integer part and 1 for fractional part).
 Then the message is prepared and printed on serial. Float are not supported, so 2 integer are required*/
-void temp_task(void *argument){
+void temp_task(struct ambient_conditions*ac){
 	int int1=0;
 	float frac=0;
 	int int2=0;
@@ -776,14 +781,14 @@ void temp_task(void *argument){
   {
 	 osSemaphoreAcquire(temp_sem,portMAX_DELAY);
 	 osSemaphoreAcquire(mutex, portMAX_DELAY);
-	 temp_value = BSP_TSENSOR_ReadTemp();
+	 ac->temp_value = BSP_TSENSOR_ReadTemp();
 	 osSemaphoreRelease(mutex);
 
 	 /* Get the remaining stack space (for debug)
 	 uint32_t size=osThreadGetStackSpace(temp_task_handle); */
 
-	 int1 = temp_value;
-	 frac = temp_value - int1;
+	 int1 = ac->temp_value;
+	 frac = ac->temp_value - int1;
 	 int2 = trunc(frac * 100);
 	 snprintf(msg,50,"TEMPERATURE = %d.%02d %cC\r\n", int1,int2,'°');
 	 HAL_UART_Transmit(&huart1,( uint8_t * )msg,sizeof(msg),1000);
@@ -793,7 +798,7 @@ void temp_task(void *argument){
 
 /*Read the humidity value from the sensor and split it in 2 integer (1 for integer part and 1 for fractional part).
 Then the message is prepared and printed on serial. Float are not supported, so 2 integer are required*/
-void humid_task(void *argument){
+void humid_task(struct ambient_conditions* ac){
 	int int1=0;
 	float frac=0;
 	int int2=0;
@@ -803,11 +808,11 @@ void humid_task(void *argument){
   {
 	 osSemaphoreAcquire(humid_sem, portMAX_DELAY);
 	 osSemaphoreAcquire(mutex, portMAX_DELAY);
-	 humid_value = BSP_HSENSOR_ReadHumidity();
+	 ac->humid_value = BSP_HSENSOR_ReadHumidity();
 	 osSemaphoreRelease(mutex);
 
-	 int1 = humid_value;
-	 frac = humid_value - int1;
+	 int1 = ac->humid_value;
+	 frac = ac->humid_value - int1;
 	 int2 = trunc(frac * 100);
 	 snprintf(msg,50,"HUMIDITY = %d.%02d %%\r\n", int1, int2);
 	 HAL_UART_Transmit(&huart1,( uint8_t * )msg,sizeof(msg),1000);
@@ -815,25 +820,39 @@ void humid_task(void *argument){
   }
 }
 
-/*Compute the apparent temperature based on real temperature and humidity*/
-void apparent_temp_task(void*argument){
+/*Compute the apparent temperature based on real temperature and humidity using the Humidex method (can only be used if the temperature is >=20) */
+void apparent_temp_task(struct ambient_conditions* ac){
 	int int1=0;
 	float frac=0;
 	int int2=0;
-	char msg[50] = "";
+	char msg[80] = "";
+	char line[]="--------------------------------------\n\r";
 
 	for(;;)
 	  {
 		 osSemaphoreAcquire(apparent_temp_sem, portMAX_DELAY);
 		 osSemaphoreAcquire(mutex, portMAX_DELAY);
-		 heatIndex = calculate_HI();
-		 osSemaphoreRelease(mutex);
 
-		 int1 = heatIndex;
-		 frac = heatIndex - int1;
-		 int2 = trunc(frac * 100);
-		 snprintf(msg,50,"APPARENT TEMPERATURE = %d.%02d %cC\r\n", int1, int2,'°');
-		 HAL_UART_Transmit(&huart1,( uint8_t * )msg,sizeof(msg),1000);
+		 /*Calculate humidex if the temperature>=20 or else set a value of 0, meaning the apparent temperature has no meaning */
+		 if(ac->temp_value>=20){
+			ac->humidex = calculate_h(ac);
+		 }
+		 else{
+			 ac->humidex = 0;
+		 }
+		 osSemaphoreRelease(mutex);
+		 if(ac->humidex){
+			 int1 = ac->humidex;
+		 	 frac = ac->humidex - int1;
+		 	 int2 = trunc(frac * 100);
+		 	 snprintf(msg,80,"APPARENT TEMPERATURE = %d.%02d %cC\r\n", int1, int2,'°');
+		 	 HAL_UART_Transmit(&huart1,( uint8_t * )msg,sizeof(msg),1000);
+		 }
+		 else{
+			 snprintf(msg,80,"THE TEMPERATURE IS TOO LOW IN ORDER TO CALCULATE THE APPARENT TEMPERATURE\r\n");
+			 HAL_UART_Transmit(&huart1,( uint8_t * )msg,sizeof(msg),1000);
+		 }
+		 HAL_UART_Transmit(&huart1,( uint8_t * )line,sizeof(line),1000);
 		 osDelay(1000);
 		 osSemaphoreRelease(temp_sem);
 	  }
