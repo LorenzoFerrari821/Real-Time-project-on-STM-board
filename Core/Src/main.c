@@ -77,10 +77,24 @@ uint8_t msg2[] = "=====> Temperature sensor HTS221 initialized \r\n";
 uint8_t msg3[] = "=====> Initialize Humidity sensor HTS221 \r\n";
 uint8_t msg4[] = "=====> Humidity sensor HTS221 initialized \r\n";
 
+
+/*Thread attributes*/
+const osThreadAttr_t ambient_tasks_attributes = {
+   .name = "Ambient_Tasks",
+   .priority = (osPriority_t) osPriorityHigh,
+   .stack_size = 650
+ };
+const osThreadAttr_t safety_task_attributes = {
+   .name = "Safety_Task",
+   .priority = (osPriority_t) osPriorityHigh1,
+   .stack_size = 128
+ };
+
 /*Threads handlers*/
 osThreadId_t temp_task_handle;
 osThreadId_t humid_task_handle;
 osThreadId_t apparent_temp_task_handle;
+osThreadId_t safety_task_handle;
 
 /*Semaphores handlers*/
 osMutexId_t mutex;
@@ -108,6 +122,7 @@ void StartDefaultTask(void *argument);
 void temp_task(struct ambient_conditions* ac);
 void humid_task(struct ambient_conditions* ac);
 void apparent_temp_task(struct ambient_conditions* ac);
+void safety_task(struct ambient_conditions* ac);
 float calculate_h(struct ambient_conditions* ac);
 void struct_init(struct ambient_conditions* ac);
 /* USER CODE END PFP */
@@ -194,20 +209,22 @@ int main(void)
 
   /* Create the thread(s) */
 
-  /* definition and creation of defaultTask and its attributes. The stack size was 128 originally*/
+  /* definition and creation of defaultTask and its attributes.
   const osThreadAttr_t defaultTask_attributes = {
     .name = "defaultTask",
-    .priority = (osPriority_t) osPriorityHigh,
-    .stack_size = 650
+    .priority = (osPriority_t) osPriorityNormal,
+    .stack_size = 128
   };
+  */
 
  /* defaultTaskHandle = osThreadNew(StartDefaultTask, NULL, &defaultTask_attributes); */
 
   /* USER CODE BEGIN RTOS_THREADS */
   /* add threads, ... */
-  apparent_temp_task_handle=osThreadNew(apparent_temp_task,&ambient_conditions, &defaultTask_attributes);
-  temp_task_handle=osThreadNew(temp_task, &ambient_conditions, &defaultTask_attributes);
-  humid_task_handle=osThreadNew(humid_task, &ambient_conditions, &defaultTask_attributes);
+  apparent_temp_task_handle=osThreadNew(apparent_temp_task,&ambient_conditions, &ambient_tasks_attributes);
+  temp_task_handle=osThreadNew(temp_task,&ambient_conditions, &ambient_tasks_attributes);
+  humid_task_handle=osThreadNew(humid_task,&ambient_conditions, &ambient_tasks_attributes);
+  safety_task_handle=osThreadNew(safety_task,&ambient_conditions,&safety_task_attributes);
   /* USER CODE END RTOS_THREADS */
 
   /* Start scheduler */
@@ -858,6 +875,14 @@ void apparent_temp_task(struct ambient_conditions* ac){
 	  }
 }
 
+void safety_task(struct ambient_conditions* ac){
+	char msg[80] = "Safety Task operating\n\r";
+
+	for(;;)
+	{
+		HAL_UART_Transmit(&huart1,( uint8_t * )msg,sizeof(msg),1000);
+	}
+}
 /* USER CODE END 4 */
 
 /* USER CODE BEGIN Header_StartDefaultTask */
