@@ -1,0 +1,3 @@
+# Real-Time-project-on-STM-board
+A real-time project (use of FreeRTOS, semaphores and threads) on the STM board b-l475e-iot01a. The board measures temperature and humidity in a room, calculates the perceived temperature and print the data on the serial. The board is connected to an imaginary temperature control system that the user can manage. 
+The project defines a variable "set temperature" (represents the connection with the temperature control system) and the user can modify it by pressing the "user" button on the board; the button can be pressed briefly or for a long time and the board raises / lowers the temperature set according to the mode used.
