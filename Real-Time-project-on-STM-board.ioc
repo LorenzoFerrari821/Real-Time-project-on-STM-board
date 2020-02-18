@@ -1,6 +1,8 @@
 #MicroXplorer Configuration settings - do not modify
-FREERTOS.IPParameters=Tasks01
+FREERTOS.IPParameters=Tasks01,configTOTAL_HEAP_SIZE,Timers01
 FREERTOS.Tasks01=defaultTask,24,128,StartDefaultTask,Default,NULL,Dynamic,NULL,NULL
+FREERTOS.Timers01=myTimer01,Callback01,osTimerPeriodic,Default,NULL,Dynamic,NULL
+FREERTOS.configTOTAL_HEAP_SIZE=6000
 File.Version=6
 KeepUserPlacement=false
 Mcu.Family=STM32L4
@@ -492,13 +494,13 @@ ProjectManager.MainLocation=Core/Src
 ProjectManager.NoMain=false
 ProjectManager.PreviousToolchain=
 ProjectManager.ProjectBuild=false
-ProjectManager.ProjectFileName=Progetto real time.ioc
-ProjectManager.ProjectName=Progetto real time
+ProjectManager.ProjectFileName=Real-Time-project-on-STM-board.ioc
+ProjectManager.ProjectName=Real-Time-project-on-STM-board
 ProjectManager.StackSize=0x400
 ProjectManager.TargetToolchain=STM32CubeIDE
 ProjectManager.ToolChainLocation=
 ProjectManager.UnderRoot=true
-ProjectManager.functionlistsort=1-MX_GPIO_Init-GPIO-false-HAL-true,2-SystemClock_Config-RCC-false-HAL-false,3-MX_DFSDM1_Init-DFSDM1-false-HAL-true,4-MX_I2C2_Init-I2C2-false-HAL-true,5-MX_QUADSPI_Init-QUADSPI-false-HAL-true,6-MX_SPI3_Init-SPI3-false-HAL-true,7-MX_USART1_UART_Init-USART1-false-HAL-true,8-MX_USART3_UART_Init-USART3-false-HAL-true,9-MX_USB_OTG_FS_PCD_Init-USB_OTG_FS-false-HAL-true
+ProjectManager.functionlistsort=1-MX_GPIO_Init-GPIO-false-HAL-true,2-SystemClock_Config-RCC-false-HAL-false,3-MX_DFSDM1_Init-DFSDM1-false-HAL-true,4-MX_I2C2_Init-I2C2-false-HAL-true,5-MX_QUADSPI_Init-QUADSPI-false-HAL-true,6-MX_SPI3_Init-SPI3-false-HAL-true,7-MX_USART1_UART_Init-USART1-false-HAL-true,8-MX_USART3_UART_Init-USART3-false-HAL-true,9-MX_USB_OTG_FS_PCD_Init-USB_OTG_FS-false-HAL-true,10-MX_TIM2_Init-TIM2-false-HAL-true,11-MX_TIM3_Init-TIM3-false-HAL-true
 RCC.ADCFreq_Value=48000000
 RCC.AHBFreq_Value=80000000
 RCC.APB1Freq_Value=80000000

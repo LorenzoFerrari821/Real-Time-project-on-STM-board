@@ -1,5 +1,5 @@
 /* --------------------------------------------------------------------------
- * Portions Copyright ï¿½ 2017 STMicroelectronics International N.V. All rights reserved.
+ * Portions Copyright © 2017 STMicroelectronics International N.V. All rights reserved.
  * Portions Copyright (c) 2013-2017 ARM Limited. All rights reserved.
  * --------------------------------------------------------------------------
  *
@@ -542,7 +542,7 @@ const osTimerDef_t os_timer_def_##name = \
 { (function), { NULL, 0U, (&os_timer_cb_##name), sizeof(StaticTimer_t) } }
 #endif
 
-/// Access a Timer definition. // @suppress("Line comments")
+/// Access a Timer definition.
 /// \param         name          name of the timer object.
 #define osTimer(name) \
 &os_timer_def_##name

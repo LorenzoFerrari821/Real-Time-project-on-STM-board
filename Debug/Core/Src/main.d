@@ -47,13 +47,13 @@ Core/Src/main.o: ../Core/Src/main.c ../Core/Inc/main.h \
  ../Middlewares/Third_Party/FreeRTOS/Source/include/deprecated_definitions.h \
  ../Middlewares/Third_Party/FreeRTOS/Source/portable/GCC/ARM_CM4F/portmacro.h \
  ../Middlewares/Third_Party/FreeRTOS/Source/include/mpu_wrappers.h \
- C:/Users/Lykens/Desktop/Workspace\ Progetto/Progetto\ real\ time/Drivers/BSP/B-L475E-IOT01/stm32l475e_iot01.h \
- C:/Users/Lykens/Desktop/Workspace\ Progetto/Progetto\ real\ time/Drivers/BSP/B-L475E-IOT01/stm32l475e_iot01_tsensor.h \
- C:/Users/Lykens/Desktop/Workspace\ Progetto/Progetto\ real\ time/Drivers/BSP/B-L475E-IOT01/stm32l475e_iot01.h \
- c:\users\lykens\desktop\workspace\ progetto\progetto\ real\ time\drivers\bsp\components\hts221\hts221.h \
- c:\users\lykens\desktop\workspace\ progetto\progetto\ real\ time\drivers\bsp\components\common\hsensor.h \
- c:\users\lykens\desktop\workspace\ progetto\progetto\ real\ time\drivers\bsp\components\common\tsensor.h \
- C:/Users/Lykens/Desktop/Workspace\ Progetto/Progetto\ real\ time/Drivers/BSP/B-L475E-IOT01/stm32l475e_iot01_hsensor.h \
+ C:/Users/Lykens/Desktop/Workspace\ Progetto/Real-Time-project-on-STM-board/Drivers/BSP/B-L475E-IOT01/stm32l475e_iot01.h \
+ C:/Users/Lykens/Desktop/Workspace\ Progetto/Real-Time-project-on-STM-board/Drivers/BSP/B-L475E-IOT01/stm32l475e_iot01_tsensor.h \
+ C:/Users/Lykens/Desktop/Workspace\ Progetto/Real-Time-project-on-STM-board/Drivers/BSP/B-L475E-IOT01/stm32l475e_iot01.h \
+ c:\users\lykens\desktop\workspace\ progetto\real-time-project-on-stm-board\drivers\bsp\components\hts221\hts221.h \
+ c:\users\lykens\desktop\workspace\ progetto\real-time-project-on-stm-board\drivers\bsp\components\common\hsensor.h \
+ c:\users\lykens\desktop\workspace\ progetto\real-time-project-on-stm-board\drivers\bsp\components\common\tsensor.h \
+ C:/Users/Lykens/Desktop/Workspace\ Progetto/Real-Time-project-on-STM-board/Drivers/BSP/B-L475E-IOT01/stm32l475e_iot01_hsensor.h \
  ../Middlewares/Third_Party/FreeRTOS/Source/include/semphr.h \
  ../Middlewares/Third_Party/FreeRTOS/Source/include/queue.h
 
@@ -155,19 +155,19 @@ Core/Src/main.o: ../Core/Src/main.c ../Core/Inc/main.h \
 
 ../Middlewares/Third_Party/FreeRTOS/Source/include/mpu_wrappers.h:
 
-C:/Users/Lykens/Desktop/Workspace\ Progetto/Progetto\ real\ time/Drivers/BSP/B-L475E-IOT01/stm32l475e_iot01.h:
+C:/Users/Lykens/Desktop/Workspace\ Progetto/Real-Time-project-on-STM-board/Drivers/BSP/B-L475E-IOT01/stm32l475e_iot01.h:
 
-C:/Users/Lykens/Desktop/Workspace\ Progetto/Progetto\ real\ time/Drivers/BSP/B-L475E-IOT01/stm32l475e_iot01_tsensor.h:
+C:/Users/Lykens/Desktop/Workspace\ Progetto/Real-Time-project-on-STM-board/Drivers/BSP/B-L475E-IOT01/stm32l475e_iot01_tsensor.h:
 
-C:/Users/Lykens/Desktop/Workspace\ Progetto/Progetto\ real\ time/Drivers/BSP/B-L475E-IOT01/stm32l475e_iot01.h:
+C:/Users/Lykens/Desktop/Workspace\ Progetto/Real-Time-project-on-STM-board/Drivers/BSP/B-L475E-IOT01/stm32l475e_iot01.h:
 
-c:\users\lykens\desktop\workspace\ progetto\progetto\ real\ time\drivers\bsp\components\hts221\hts221.h:
+c:\users\lykens\desktop\workspace\ progetto\real-time-project-on-stm-board\drivers\bsp\components\hts221\hts221.h:
 
-c:\users\lykens\desktop\workspace\ progetto\progetto\ real\ time\drivers\bsp\components\common\hsensor.h:
+c:\users\lykens\desktop\workspace\ progetto\real-time-project-on-stm-board\drivers\bsp\components\common\hsensor.h:
 
-c:\users\lykens\desktop\workspace\ progetto\progetto\ real\ time\drivers\bsp\components\common\tsensor.h:
+c:\users\lykens\desktop\workspace\ progetto\real-time-project-on-stm-board\drivers\bsp\components\common\tsensor.h:
 
-C:/Users/Lykens/Desktop/Workspace\ Progetto/Progetto\ real\ time/Drivers/BSP/B-L475E-IOT01/stm32l475e_iot01_hsensor.h:
+C:/Users/Lykens/Desktop/Workspace\ Progetto/Real-Time-project-on-STM-board/Drivers/BSP/B-L475E-IOT01/stm32l475e_iot01_hsensor.h:
 
 ../Middlewares/Third_Party/FreeRTOS/Source/include/semphr.h:
 
